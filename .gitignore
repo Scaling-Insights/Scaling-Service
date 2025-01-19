@@ -1,0 +1,12 @@
+.DS_Store
+.DS_Store?
+._*
+adapter/.DS_Store
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+helm_vultr/pv.yaml
+**/values.yaml
+**/.vscode

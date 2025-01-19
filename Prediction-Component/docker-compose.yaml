@@ -1,0 +1,44 @@
+networks:
+  app-tier:
+    driver: bridge
+
+services:
+  postgresql:
+    image: "bitnami/postgresql:latest"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRESQL_DATABASE=
+      - POSTGRESQL_USERNAME=
+      - POSTGRESQL_PASSWORD=
+    networks:
+      - app-tier
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U my_user -d scaling-service" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DB_HOST=
+      - DB_PORT=
+      - DB_NAME=
+      - DB_USER=
+      - DB_PASSWORD=
+      - FORECAST_STEPS=
+      - FORECAST_FREQUENCY_MINUTES=
+      - FORECAST_INTERVAL_MINUTES=
+      - ICC_MAX_ATTEMPTS=
+      - ICC_RETRY_INTERVAL_SECONDS=
+      - ICC_HOST=
+    networks:
+      - app-tier
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    ports:
+      - "5000:5000"
